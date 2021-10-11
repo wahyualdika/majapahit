@@ -6,6 +6,7 @@ use Illuminate\Http\Request;
 use App\Models\ProfileModel;
 use App\Models\User;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Validator;
 
 class UserDataController extends Controller
 {
@@ -14,17 +15,19 @@ class UserDataController extends Controller
     }
 
     public function getProfile(Request $request){
-      $user = User::findOrFail(Auth::user()->id);
-      return $user;
+      $users = User::findOrFail(Auth::user()->id);
+      return view('user.user_profile')->withUsers($users);
     }
 
     public function makeProfileForm(Request $request){
-      $user = User::findOrFail(Auth::user()->id);
-      return view('user.user_edit_profile_form')->withUser($user);
+      $users = User::findOrFail(Auth::user()->id);
+      return view('user.user_profile_form')->withUsers($users);
     }
 
     public function editProfileForm(Request $request){
-      $user = User::findOrFail(Auth::user()->id);
+      $users = ProfileModel::where('users_id', Auth::user()->id)->first();
+      return view('user.user_edit_profile_form')->withUsers($users);
+      // return $users->perkerjaan;
     }
 
     public function editProfile(Request $request){
@@ -34,7 +37,7 @@ class UserDataController extends Controller
           'pendidikan_terakhir' => 'required',
       ]);
 
-      $profile = ProfileModel::findOrFail(Auth::user()->id);
+      $profile = ProfileModel::where('users_id', Auth::user()->id)->first();
       $profile->alamat = $request->alamat;
       $profile->perkerjaan = $request->perkerjaan;
       $profile->pendidikan_terakhir = $request->pendidikan_terakhir;
@@ -45,7 +48,7 @@ class UserDataController extends Controller
       }
     }
 
-    public function createProfile(Request $request){
+    public function makeProfile(Request $request){
       $validator = Validator::make($request->all(), [
           'alamat' => 'required|email:rfc,dns',
           'perkerjaan' => 'required',
@@ -54,14 +57,17 @@ class UserDataController extends Controller
 
       $profile = new ProfileModel;
       $profile->users_id = Auth::user()->id;
-      $profile->alamat = $request->id;
+      $profile->nama = $request->nama;
+      $profile->alamat = $request->alamat;
       $profile->pendidikan_terakhir = $request->pendidikan_terakhir;
+      $profile->nomor_telepon = $request->nomor_telepon;
+      $profile->perkerjaan = $request->perkerjaan;
       $profile->save();
       return $profile;
     }
 
     public function deleteProfile(Request $request){
-      $profile = ProfileModel::findOrFail($id);
+      $profile = ProfileModel::where('users_id', Auth::user()->id)->first();
       $profile->delete();
       return "Berhasil dihapus";
     }

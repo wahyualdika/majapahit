@@ -23,3 +23,8 @@ Route::post('/login',[LoginController::class, 'login'])->name('login');
 Route::get('/logout',[LoginController::class, 'logout'])->name('logout');
 
 Route::get('/profile',[UserDataController::class,'getProfile'])->name('profile');
+Route::get('/form_edit_profile',[UserDataController::class,'editProfileForm'])->name('edit_profile_form');
+Route::get('/form_make_profile',[UserDataController::class,'makeProfileForm'])->name('make_profile_form');
+Route::post('/make_profile',[UserDataController::class,'makeProfile'])->name('make_profile');
+Route::post('/edit_profile',[UserDataController::class,'editProfile'])->name('edit_profile');
+Route::get('/delete_profile',[UserDataController::class,'deleteProfile'])->name('delete_profile');

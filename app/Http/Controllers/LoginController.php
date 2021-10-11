@@ -22,18 +22,18 @@ class LoginController extends Controller
 
     public function login(Request $request)
     {
-      // $validator = Validator::make($request->all(), [
-      //     'email' => 'required|email:rfc,dns',
-      //     'password' => 'required',
-      // ]);
-      // if ($validator->fails()) {
-      //     return redirect('/login')->withErrors($validator, 'login');
-      // }
+      $validator = Validator::make($request->all(), [
+          'email' => 'required|email:rfc,dns',
+          'password' => 'required',
+      ]);
+      if ($validator->fails()) {
+          return redirect('/login')->withErrors($validator, 'login');
+      }
       $email = $request->email;
       $password = $request->password;
-      // $remember = $request->remember;
+      $remember = $request->remember;
 
-      if (Auth::attempt(['email' => $email, 'password' => $password])) {
+      if (Auth::attempt(['email' => $email, 'password' => $password],$remember)) {
           $request->session()->regenerate();
           return redirect('/profile');
       }
